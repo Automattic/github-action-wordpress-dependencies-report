@@ -5,7 +5,7 @@ const { getOctokit, context } = require( '@actions/github' );
 const { setFailed, getInput } = require( '@actions/core' );
 const sizeLimit = require( 'size-limit' );
 const filePlugin = require( '@size-limit/file' );
-const prettyBytes = require( 'pretty-bytes' );
+import prettyBytes from 'pretty-bytes';
 
 const HEADING = '# WordPress Dependencies Report\n\n';
 
