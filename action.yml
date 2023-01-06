@@ -1,0 +1,18 @@
+name: 'WordPress Dependencies Report'
+description: 'Compare and generate a report about the assets that changed, like their compressed size and WordPress dependencies'
+inputs:
+  github-token:
+    description: 'GitHub token to use to make requests to Github API'
+    required: true
+  old-assets-folder:
+    description: "Path to the folder with the old compiled assets."
+    required: true
+  old-assets-branch:
+    description: 'Branch used to generate the folder with the old compiled assets'
+    required: true
+  new-assets-folder:
+    description: 'Path to the folder with the current compiled assets.'
+    required: true
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
