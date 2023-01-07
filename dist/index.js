@@ -12862,21 +12862,6 @@ module.exports = webpackEmptyContext;
 
 /***/ }),
 
-/***/ 3979:
-/***/ ((module) => {
-
-function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = () => ([]);
-webpackEmptyContext.resolve = webpackEmptyContext;
-webpackEmptyContext.id = 3979;
-module.exports = webpackEmptyContext;
-
-/***/ }),
-
 /***/ 9491:
 /***/ ((module) => {
 
@@ -12906,6 +12891,14 @@ module.exports = require("events");
 
 "use strict";
 module.exports = require("fs");
+
+/***/ }),
+
+/***/ 3292:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs/promises");
 
 /***/ }),
 
@@ -13195,7 +13188,8 @@ const { getOctokit, context } = __nccwpck_require__( 5438 );
 const { setFailed, getInput } = __nccwpck_require__( 2186 );
 const sizeLimit = __nccwpck_require__( 1071 );
 const filePlugin = __nccwpck_require__( 1433 );
-
+const fs = __nccwpck_require__(3292)
+;
 
 const HEADING = '# WordPress Dependencies Report\n\n';
 
@@ -13276,6 +13270,16 @@ async function postOrEditComment(octokit, repo, pr, content) {
         }
     }
 }
+
+async function readJSON(filePath, defaultValue) {
+    try {
+        const content = await fs.readFile(filePath, 'utf8')
+        return JSON.parse(content);
+    } catch(e) {
+        return defaultValue;
+    }
+}
+
 async function run() {
     const token = getInput( 'github-token', { required: true } );
     const octokit = getOctokit( token );
@@ -13290,17 +13294,12 @@ async function run() {
         required: true,
     } );
 
-    let oldAssets;
+    const oldAssets = readJSON(oldAssetsFolder + '/assets.json', {});
 
-    try {
-        oldAssets = __nccwpck_require__(3979)(oldAssetsFolder + "/assets.json");
-    } catch(e) {}
+    const files = await fs.readdir(newAssetsFolder);
+    console.log(files);
 
-    if (!oldAssets) {
-        oldAssets = {};
-    }
-
-    const newAssets = __nccwpck_require__(3979)(newAssetsFolder+"/assets.json");
+    const newAssets = readJSON( newAssetsFolder + '/assets.json', false );
 
     if ( ! newAssets ) {
         return;
