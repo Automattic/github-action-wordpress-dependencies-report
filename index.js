@@ -51,7 +51,11 @@ async function fetchPreviousComment(
             issue_number: pr.number
         }
     );
-    console.log(commentList);
+    console.log({
+        ...repo,
+        // eslint-disable-next-line camelcase
+        issue_number: pr.number
+    });
 
     const sizeLimitComment = commentList.find(comment =>
         comment.body.startsWith(HEADING)
