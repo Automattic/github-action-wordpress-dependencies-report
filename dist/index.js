@@ -13347,12 +13347,12 @@ async function run() {
                 })
             )
         } else {
-            sizesPromises.push(Promise.resolve(0));
+            sizesPromises.push(Promise.resolve( {size: 0} ));
         }
 
         const sizes = await Promise.all(sizesPromises);
 
-        const sizeDiff = computeSizeDiff(sizes[1], sizes[0]);
+        const sizeDiff = computeSizeDiff( sizes[1].size, sizes[0].size );
 
         reportContent +=
             `| \`${asset}\` | ${addedDeps} | ${removedDeps} | ${sizeDiff} |` +
