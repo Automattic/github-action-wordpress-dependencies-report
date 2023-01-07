@@ -13253,7 +13253,7 @@ async function postOrEditComment(octokit, repo, pr, content) {
 
     if (!previousComment) {
         try {
-            await octokit.issues.createComment({
+            await octokit.rest.issues.createComment({
                 owner: repo.owner.login,
                 repo: repo.name,
                 issue_number: pr.number,
@@ -13264,7 +13264,7 @@ async function postOrEditComment(octokit, repo, pr, content) {
         }
     } else {
         try {
-            await octokit.issues.updateComment({
+            await octokit.rest.issues.updateComment({
                 owner: repo.owner.login,
                 repo: repo.name,
                 comment_id: previousComment.id,
