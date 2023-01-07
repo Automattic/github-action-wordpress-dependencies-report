@@ -87,6 +87,16 @@ async function postOrEditComment(octokit, repo, pr, content) {
         }
     }
 }
+
+async function readJSON(filePath, defaultValue) {
+    try {
+        const content = await fs.readFile(filePath, 'utf8')
+        return JSON.parse(content);
+    } catch(e) {
+        return defaultValue;
+    }
+}
+
 async function run() {
     const token = getInput( 'github-token', { required: true } );
     const octokit = getOctokit( token );
@@ -101,21 +111,12 @@ async function run() {
         required: true,
     } );
 
-    let oldAssets;
-
-    try {
-        oldAssets = require(oldAssetsFolder + '/assets.json');
-    } catch(e) {}
-
-    if (!oldAssets) {
-        oldAssets = {};
-    }
+    const oldAssets = readJSON(oldAssetsFolder + '/assets.json', {});
 
     const files = await fs.readdir(newAssetsFolder);
     console.log(files);
 
-
-    const newAssets = require( newAssetsFolder + '/assets.json' );
+    const newAssets = readJSON( newAssetsFolder + '/assets.json', false );
 
     if ( ! newAssets ) {
         return;
