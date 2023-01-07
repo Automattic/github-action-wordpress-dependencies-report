@@ -13227,7 +13227,7 @@ async function fetchPreviousComment(
     pr
 ) {
     const commentList = await octokit.paginate(
-        "GET /repos/:owner/:repo/issues/:issue_number/comments",
+        "GET /repos/{owner}/{repo}/issues/{issue_number}/comments",
         {
             ...repo,
             // eslint-disable-next-line camelcase
