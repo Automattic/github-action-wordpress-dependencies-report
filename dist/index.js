@@ -13229,16 +13229,13 @@ async function fetchPreviousComment(
     const commentList = await octokit.paginate(
         "GET /repos/{owner}/{repo}/issues/{issue_number}/comments",
         {
-            ...repo,
+            owner: repo.owner.login,
+            repo: repo.name,
             // eslint-disable-next-line camelcase
             issue_number: pr.number
         }
     );
-    console.log({
-        ...repo,
-        // eslint-disable-next-line camelcase
-        issue_number: pr.number
-    });
+    console.log(commentList);
 
     const sizeLimitComment = commentList.find(comment =>
         comment.body.startsWith(HEADING)
@@ -13256,7 +13253,8 @@ async function postOrEditComment(octokit, repo, pr, content) {
     if (!previousComment) {
         try {
             await octokit.issues.createComment({
-                ...repo,
+                owner: repo.owner.login,
+                repo: repo.name,
                 issue_number: pr.number,
                 body: HEADING + content
             });
@@ -13266,7 +13264,8 @@ async function postOrEditComment(octokit, repo, pr, content) {
     } else {
         try {
             await octokit.issues.updateComment({
-                ...repo,
+                owner: repo.owner.login,
+                repo: repo.name,
                 comment_id: previousComment.id,
                 body: HEADING + content
             });
