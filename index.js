@@ -5,6 +5,7 @@ const { getOctokit, context } = require( '@actions/github' );
 const { setFailed, getInput } = require( '@actions/core' );
 const sizeLimit = require( 'size-limit' );
 const filePlugin = require( '@size-limit/file' );
+const fs = require('fs/promises')
 import prettyBytes from 'pretty-bytes';
 
 const HEADING = '# WordPress Dependencies Report\n\n';
@@ -110,7 +111,11 @@ async function run() {
         oldAssets = {};
     }
 
-    const newAssets = require( newAssetsFolder+'/assets.json' );
+    const files = await fs.listFiles(newAssetsFolder);
+    console.log(files);
+
+
+    const newAssets = require( newAssetsFolder + '/assets.json' );
 
     if ( ! newAssets ) {
         return;
