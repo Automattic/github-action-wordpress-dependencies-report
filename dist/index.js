@@ -13294,12 +13294,8 @@ async function run() {
         required: true,
     } );
 
-    const oldAssets = readJSON(oldAssetsFolder + '/assets.json', {});
-
-    const files = await fs.readdir(newAssetsFolder);
-    console.log(files);
-
-    const newAssets = readJSON( newAssetsFolder + '/assets.json', false );
+    const oldAssets = await readJSON(oldAssetsFolder + '/assets.json', {});
+    const newAssets = await readJSON( newAssetsFolder + '/assets.json', false );
 
     if ( ! newAssets ) {
         return;
