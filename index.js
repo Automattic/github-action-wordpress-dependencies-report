@@ -51,6 +51,7 @@ async function fetchPreviousComment(
             issue_number: pr.number
         }
     );
+    console.log(commentList);
 
     const sizeLimitComment = commentList.find(comment =>
         comment.body.startsWith(HEADING)
@@ -190,4 +191,7 @@ async function run() {
     );
 }
 
-run().catch(error => setFailed(error.message));
+run().catch(function(error) {
+    console.log(error.stack);
+    setFailed(error.message);
+});
