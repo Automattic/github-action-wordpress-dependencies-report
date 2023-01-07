@@ -31,9 +31,7 @@ function computePercentageDiff(oldSize, newSize) {
 }
 
 function computeSizeDiff(oldSize, newSize) {
-    return prettyBytes(newSize) +
-        " - " + prettyBytes(oldSize) +
-        " = " + prettyBytes(newSize - oldSize, {signed: true}) +
+    return prettyBytes(newSize - oldSize, {signed: true}) +
         " ( "+computePercentageDiff(oldSize, newSize) + " )";
 }
 
@@ -176,8 +174,10 @@ async function run() {
 
         const sizeDiff = computeSizeDiff( sizes[1][0].size, sizes[0][0].size );
 
+        const totalSize = prettyBytes(sizes[0][0].size);
+
         reportContent +=
-            `| \`${asset}\` | ${addedDeps} | ${removedDeps} | ${sizeDiff} |` +
+            `| \`${asset}\` | ${addedDeps} | ${removedDeps} | ${totalSize} | ${sizeDiff} |` +
             '\n';
     }
 
@@ -185,9 +185,9 @@ async function run() {
         'The `github-action-wordpress-dependencies-report` action has detected some script changes between this branch and ' + oldAssetsBranch +
         '. Please review and confirm the following are correct before merging.' +
         '\n\n' +
-        '| Script Handle | Added Dependencies |  Removed Dependencies | Size Diff |' +
+        '| Script Handle | Added Dependencies |  Removed Dependencies | Total Size | Size Diff |' +
         '\n' +
-        '| ------------- | ------- |  ------- | ------- | ' +
+        '| ------------- | ------- |  ------- | ------- | ------- | ' +
         '\n' +
         reportContent +
         '\n\n' +
