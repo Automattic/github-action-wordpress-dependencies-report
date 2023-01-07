@@ -13235,7 +13235,6 @@ async function fetchPreviousComment(
             issue_number: pr.number
         }
     );
-    console.log(commentList);
 
     const sizeLimitComment = commentList.find(comment =>
         comment.body.startsWith(HEADING)
@@ -13243,8 +13242,10 @@ async function fetchPreviousComment(
     return !sizeLimitComment ? null : sizeLimitComment;
 }
 
-function emitErrorNoPermission(prefix) {
+function emitErrorNoPermission(prefix, error) {
     console.log(prefix+" This can happen on PR's originating from a fork without write permissions.");
+    console.log(error.message);
+    console.log(error.stack);
 }
 
 async function postOrEditComment(octokit, repo, pr, content) {
@@ -13259,7 +13260,7 @@ async function postOrEditComment(octokit, repo, pr, content) {
                 body: HEADING + content
             });
         } catch (error) {
-            emitErrorNoPermission("Error creating comment.");
+            emitErrorNoPermission("Error creating comment.", error);
         }
     } else {
         try {
@@ -13270,7 +13271,7 @@ async function postOrEditComment(octokit, repo, pr, content) {
                 body: HEADING + content
             });
         } catch (error) {
-            emitErrorNoPermission("Error updating comment.");
+            emitErrorNoPermission("Error updating comment.", error);
         }
     }
 }
