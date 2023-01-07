@@ -111,7 +111,7 @@ async function run() {
         oldAssets = {};
     }
 
-    const files = await fs.listFiles(newAssetsFolder);
+    const files = await fs.readdir(newAssetsFolder);
     console.log(files);
 
 
