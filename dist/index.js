@@ -13341,7 +13341,7 @@ async function run() {
                 }]
             })
         ];
-        if (oldDependencies[asset]) {
+        if (oldAssets[asset]) {
             sizesPromises.push(
                 sizeLimit([ filePlugin ], {
                     "checks": [{
