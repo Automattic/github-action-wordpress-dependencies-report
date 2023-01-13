@@ -63,10 +63,13 @@ function emitErrorNoPermission(prefix, error) {
     console.log(error.stack);
 }
 
-async function postOrEditComment(octokit, repo, pr, content) {
+async function postOrEditComment(octokit, repo, pr, content, onlyUpdate = false) {
     const previousComment = await fetchPreviousComment(octokit, repo, pr);
 
     if (!previousComment) {
+        if ( onlyUpdate ) {
+            return;
+        }
         try {
             await octokit.rest.issues.createComment({
                 owner: repo.owner.login,
