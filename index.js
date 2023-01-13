@@ -104,6 +104,7 @@ async function run() {
     const token = getInput( 'github-token', { required: true } );
     const octokit = getOctokit( token );
     const payload = context.payload;
+    const commit = payload.pull_request.head.sha;
     const oldAssetsFolder = getInput( 'old-assets-folder', {
         required: true,
     } );
@@ -182,7 +183,7 @@ async function run() {
     }
 
     await postOrEditComment(octokit, payload.repository, payload.pull_request,
-        'The `github-action-wordpress-dependencies-report` action has detected some script changes between this branch and ' + oldAssetsBranch +
+        'The `github-action-wordpress-dependencies-report` action has detected some script changes between the commit ' + commit + ' and ' + oldAssetsBranch +
         '. Please review and confirm the following are correct before merging.' +
         '\n\n' +
         '| Script Handle | Added Dependencies |  Removed Dependencies | Total Size | Size Diff |' +
