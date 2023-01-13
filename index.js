@@ -125,20 +125,9 @@ async function run() {
         return;
     }
 
-    const changes = Object.fromEntries(
-        Object.entries( newAssets )
-            .filter( ( [ key, { version } ] ) => {
-                return !oldAssets[key] || oldAssets[key].version !== version;
-            })
-    );
-
-    if ( Object.keys( changes ).length === 0 ) {
-        return;
-    }
-
     let reportContent = '';
 
-    for (const [ asset, { dependencies } ] of Object.entries(changes)) {
+    for (const [ asset, { dependencies } ] of Object.entries(newAssets)) {
         const oldDependencies = oldAssets[asset] ? oldAssets[ asset ].dependencies : [];
         const added = dependencies.filter(
             ( dependency ) =>
@@ -179,6 +168,11 @@ async function run() {
         const sizeDiff = computeSizeDiff( sizes[1][0].size, sizes[0][0].size );
 
         const totalSize = prettyBytes(sizes[0][0].size);
+
+        if (sizes[0][0].size === sizes[1][0].size || 0 === addedDeps.length || 0 === removedDeps.length ) {
+            // If there are no changes, don't document the line.
+            continue;
+        }
 
         reportContent +=
             `| \`${asset}\` | ${addedDeps} | ${removedDeps} | ${totalSize} | ${sizeDiff} |` +
