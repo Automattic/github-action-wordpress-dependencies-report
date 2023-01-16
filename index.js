@@ -169,7 +169,7 @@ async function run() {
 
         const totalSize = prettyBytes(sizes[0][0].size);
 
-        if (sizes[0][0].size === sizes[1][0].size || 0 === addedDeps.length || 0 === removedDeps.length ) {
+        if (sizes[0][0].size === sizes[1][0].size && 0 === addedDeps.length && 0 === removedDeps.length ) {
             // If there are no changes, don't document the line.
             continue;
         }
