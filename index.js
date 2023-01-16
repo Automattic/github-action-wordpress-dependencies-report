@@ -190,7 +190,7 @@ async function run() {
     if (reportContent.length === 0) {
         // If there were changes before (aka a comment was posted before), we update it to reflect that there
         // were no changes detected anymore, so the edit history isn't lost.
-        reportTable = 'No changes detected in the current commit. But comment was left so it is possible to check for the edit history.';
+        reportTable = 'No changes detected in the current commit. But the comment was left so it is possible to check for the edit history.';
         // We only publish this comment IF there is an update. We never create a comment with this content.
         onlyUpdate = true;
     }
