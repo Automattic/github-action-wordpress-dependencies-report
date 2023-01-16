@@ -151,7 +151,7 @@ async function run() {
 
     let reportContent = '';
 
-    for (const [ asset, { dependencies } ] of Object.keys(newAssets)) {
+    for (const [ asset, { dependencies } ] of Object.entries(newAssets)) {
         const newAssetPath = await determineAssetPath(newAssetsFolder, asset);
         const oldAssetPath = await determineAssetPath(oldAssetsFolder, asset);
         const oldDependencies = oldAssets[asset] ? oldAssets[ asset ].dependencies : [];
