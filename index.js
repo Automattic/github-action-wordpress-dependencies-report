@@ -112,18 +112,19 @@ async function readJSON(filePath, defaultValue) {
     }
 }
 
-async function determineAssetFile(newAssetsFolder, jsAsset) {
+async function determineAssetPath(assetsFolder, jsAsset) {
+    const jsPath = path.join(assetsFolder, jsAsset);
     if (jsAsset.endsWith("-style.js")) {
-        const jsPath = path.join(newAssetsFolder, jsAsset);
         const jsFile = await readFile(jsPath, '');
-        const cssAsset = asset.replace(/-style.js$/, "-style.css");
-        const cssPath = path.join(newAssetsFolder, cssAsset);
-        const cssFile = await readFile(cssPath, '');
-        if (jsFile.length === 0 && cssFile.length > 0) {
-            return cssAsset;
+        if (jsFile.length === 0) {
+            const cssPath = jsPath.replace(/-style.js$/, "-style.css");
+            const cssFile = await readFile(cssPath, '');
+            if (cssFile.length > 0) {
+                return cssPath;
+            }
         }
     }
-    return jsAsset;
+    return jsPath;
 }
 
 async function run() {
@@ -151,9 +152,8 @@ async function run() {
     let reportContent = '';
 
     for (const [ asset, { dependencies } ] of Object.keys(newAssets)) {
-        const assetFile = await determineAssetFile(newAssetsFolder, asset);
-        const newAssetPath = path.join(newAssetsFolder, assetFile);
-        const oldAssetPath = path.join(oldAssetsFolder, assetFile);
+        const newAssetPath = await determineAssetPath(newAssetsFolder, asset);
+        const oldAssetPath = await determineAssetPath(oldAssetsFolder, asset);
         const oldDependencies = oldAssets[asset] ? oldAssets[ asset ].dependencies : [];
         const added = dependencies.filter(
             ( dependency ) =>
