@@ -13295,19 +13295,25 @@ async function readJSON(filePath, defaultValue) {
     }
 }
 
-async function determineAssetPath(assetsFolder, jsAsset) {
-    const jsPath = path.join(assetsFolder, jsAsset);
+async function determineAssetFile(assetsFolder, jsAsset) {
     if (jsAsset.endsWith("-style.js")) {
+        const jsPath = path.join(assetsFolder, jsAsset);
         const jsFile = await readFile(jsPath, '');
         if (jsFile.length === 0) {
-            const cssPath = jsPath.replace(/-style.js$/, "-style.css");
+            const cssAsset = jsAsset.replace(/-style.js$/, "-style.css");
+            const cssPath = path.join(assetsFolder, cssAsset);
             const cssFile = await readFile(cssPath, '');
             if (cssFile.length > 0) {
-                return cssPath;
+                return cssAsset;
             }
         }
     }
-    return jsPath;
+    return jsAsset;
+}
+
+async function determineAssetPath(assetsFolder, jsAsset) {
+    const asset = await determineAssetFile(assetsFolder, jsAsset);
+    return path.join(assetsFolder, asset);
 }
 
 async function run() {
@@ -13383,8 +13389,10 @@ async function run() {
             continue;
         }
 
+        const scriptHandle = await determineAssetFile(newAssetsFolder, asset);
+
         reportContent +=
-            `| \`${asset}\` | ${addedDeps} | ${removedDeps} | ${totalSize} | ${sizeDiff} |` +
+            `| \`${scriptHandle}\` | ${addedDeps} | ${removedDeps} | ${totalSize} | ${sizeDiff} |` +
             '\n';
     }
 
