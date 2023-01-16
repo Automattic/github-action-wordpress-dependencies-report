@@ -6,6 +6,7 @@ const { setFailed, getInput } = require( '@actions/core' );
 const sizeLimit = require( 'size-limit' );
 const filePlugin = require( '@size-limit/file' );
 const fs = require('fs/promises')
+const path = require('path');
 import prettyBytes from 'pretty-bytes';
 
 const HEADING = '# WordPress Dependencies Report\n\n';
@@ -94,13 +95,35 @@ async function postOrEditComment(octokit, repo, pr, content, onlyUpdate = false)
     }
 }
 
+async function readFile(filePath, defaultContent) {
+    try {
+        return await fs.readFile(filePath, 'utf8')
+    } catch(e) {
+        return defaultContent;
+    }
+}
+
 async function readJSON(filePath, defaultValue) {
     try {
-        const content = await fs.readFile(filePath, 'utf8')
+        const content = await readFile(filePath, '');
         return JSON.parse(content);
     } catch(e) {
         return defaultValue;
     }
+}
+
+async function determineAssetFile(newAssetsFolder, jsAsset) {
+    if (jsAsset.endsWith("-style.js")) {
+        const jsPath = path.join(newAssetsFolder, jsAsset);
+        const jsFile = await readFile(jsPath, '');
+        const cssAsset = asset.replace(/-style.js$/, "-style.css");
+        const cssPath = path.join(newAssetsFolder, cssAsset);
+        const cssFile = await readFile(cssPath, '');
+        if (jsFile.length === 0 && cssFile.length > 0) {
+            return cssAsset;
+        }
+    }
+    return jsAsset;
 }
 
 async function run() {
@@ -127,7 +150,10 @@ async function run() {
 
     let reportContent = '';
 
-    for (const [ asset, { dependencies } ] of Object.entries(newAssets)) {
+    for (const [ asset, { dependencies } ] of Object.keys(newAssets)) {
+        const assetFile = await determineAssetFile(newAssetsFolder, asset);
+        const newAssetPath = path.join(newAssetsFolder, assetFile);
+        const oldAssetPath = path.join(oldAssetsFolder, assetFile);
         const oldDependencies = oldAssets[asset] ? oldAssets[ asset ].dependencies : [];
         const added = dependencies.filter(
             ( dependency ) =>
@@ -147,7 +173,7 @@ async function run() {
         const sizesPromises = [
             sizeLimit([ filePlugin ], {
                 "checks": [{
-                    "files": [newAssetsFolder+"/"+asset]
+                    "files": [newAssetPath]
                 }]
             })
         ];
@@ -155,7 +181,7 @@ async function run() {
             sizesPromises.push(
                 sizeLimit([ filePlugin ], {
                     "checks": [{
-                        "files": [oldAssetsFolder+"/"+asset]
+                        "files": [oldAssetPath]
                     }]
                 })
             )
