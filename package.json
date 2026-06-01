@@ -22,7 +22,7 @@
     "@actions/artifact": "^1.1.1",
     "@actions/core": "^1.11.1",
     "@actions/github": "^5.1.1",
-    "@size-limit/file": "^8.1.0",
+    "@size-limit/file": "^8.2.6",
     "pretty-bytes": "^6.0.0",
     "size-limit": "^8.1.0"
   },
